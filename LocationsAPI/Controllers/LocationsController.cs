@@ -10,7 +10,6 @@ namespace LocationsAPI
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class LocationsController : ControllerBase
     {
         private readonly LocationContext _dbContext;
