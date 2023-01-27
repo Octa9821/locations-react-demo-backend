@@ -33,7 +33,8 @@ namespace LocationsAPI.Controllers
                 return BadRequest();
             }
 
-            return Ok(token);
+
+            return Ok(new { token });
         }
 
         [HttpPost("register")]

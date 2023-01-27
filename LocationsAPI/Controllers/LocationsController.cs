@@ -51,6 +51,27 @@ namespace LocationsAPI
             return location;
         }
 
+        [HttpGet("pagination/{page}")]
+        public async Task<IActionResult> GetLocationsPagination(int page)
+        {
+            int locationsPerPage = 3;
+            int totalLocations = await _dbContext.Locations.CountAsync();
+            int totalPages = (int)Math.Ceiling((double)totalLocations / locationsPerPage);
+
+            if (page > totalPages)
+            {
+                return NotFound();
+            }
+
+            var locations = await _dbContext.Locations
+                .Skip((page - 1) * locationsPerPage)
+                .Take(locationsPerPage)
+                .ToListAsync();
+
+            return Ok(new { locations, totalPages });
+        }
+
+
         // POST: api/Locations
         [HttpPost]
         public async Task<ActionResult<Location>> PostLocation(Location location)

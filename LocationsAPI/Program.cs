@@ -16,7 +16,7 @@ namespace LocationsAPI
             // Add services to the container.
             builder.Services.AddCors(options =>
             {
-                options.AddPolicy(name: "_reactapplication",
+                options.AddPolicy(name: "AllowAllOrigins",
                                   policy =>
                                   {
                                       policy
@@ -68,7 +68,7 @@ namespace LocationsAPI
 
             app.UseHttpsRedirection();
 
-            app.UseCors("_reactapplication");
+            app.UseCors("AllowAllOrigins");
 
             app.UseAuthentication();
 
