@@ -2,6 +2,7 @@
 using LocationsAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Web.Http.Results;
 
 namespace LocationsAPI.Controllers
 {
@@ -41,10 +42,13 @@ namespace LocationsAPI.Controllers
         public async Task<IActionResult> Register([FromBody] LoginModel loginModel)
         {
             var result = await _authenticationService.CreateUserAsync(loginModel.Username, loginModel.Password);
-            if (!result)
+            if (result == 0)
             {
-
                 return BadRequest();
+            }
+            else if (result == -1)
+            {
+                return BadRequest("Username already exists");
             }
 
             return Ok();

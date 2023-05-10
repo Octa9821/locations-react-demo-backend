@@ -76,6 +76,7 @@ namespace LocationsAPI
         [HttpPost]
         public async Task<ActionResult<Location>> PostLocation(Location location)
         {
+
             _dbContext.Locations.Add(location);
             await _dbContext.SaveChangesAsync();
 

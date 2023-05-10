@@ -8,7 +8,7 @@ namespace LocationsAPI.Services
     public interface IAuthenticationService
     {
         public Task<User?> GetUserAsync(string username, string password);
-        public Task<bool> CreateUserAsync(string username, string password);
+        public Task<int> CreateUserAsync(string username, string password);
     }
 
 
@@ -37,23 +37,33 @@ namespace LocationsAPI.Services
             return user;
         }
 
-        public async Task<bool> CreateUserAsync(string username, string password)
+        public async Task<int> CreateUserAsync(string username, string password)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            var user = await _dbContext.Users.FirstOrDefaultAsync(u => u.Username == username);
+            if (user == null)
             {
-                return false;
+                if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                {
+                    // If username or password are null/empty, returns 0
+                    return 0;
+                }
+
+                await _dbContext.Users.AddAsync(new User
+                {
+                    Id = Guid.NewGuid(),
+                    Username = username,
+                    Password = Crypto.HashPassword(password),
+                });
+
+                var result = await _dbContext.SaveChangesAsync();
+                // If operation was successful, returns any number > 0;
+                return result;
             }
-
-            await _dbContext.Users.AddAsync(new User
+            else
             {
-                Id = Guid.NewGuid(),
-                Username = username,
-                Password = Crypto.HashPassword(password),
-            });
-
-            var result = await _dbContext.SaveChangesAsync();
-
-            return result > 0;
+                // If the user already exists, returns -1
+                return -1;
+            }
         }
     }
 }
